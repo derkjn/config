@@ -131,7 +131,27 @@ return {
       end
 
       -- DAP UI
-      dapui.setup()
+      dapui.setup({
+        layouts = {
+          {
+            elements = {
+              { id = "controls", size = 0.10 },
+            },
+            size = 2,
+            position = "top",
+          },
+          {
+            elements = {
+              { id = "dap-repl", size = 0.20 },
+              { id = "breakpoints", size = 0.20 },
+              { id = "scopes", size = 0.30 },
+              { id = "watches", size = 0.30 },
+            },
+            size = 20,
+            position = "bottom",
+          },
+        },
+      })
       require("nvim-dap-virtual-text").setup()
 
       -- Auto open/close DAP UI
