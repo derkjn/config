@@ -1,13 +1,13 @@
-alias ...=cd ../..
+alias ...='cd ../..'
 
+# Dev tmux session
 _dev_tmux_start() {
-	local target_dir
-	if [ -d "$HOME/dab" ]; then
-		target_dir="$HOME/dab"
-	else
-		target_dir="$PWD"
-	fi
-
-	tmux new-session -A -s dev -c "$target_dir"
+  local target_dir
+  if [ -d "$HOME/dab" ]; then
+    target_dir="$HOME/dab"
+  else
+    target_dir="$PWD"
+  fi
+  tmux new-session -A -s dev -c "$target_dir"
 }
 alias dev='_dev_tmux_start'

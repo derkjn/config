@@ -110,12 +110,13 @@ ensure_bashrc_fzf() {
   local bashrc_file="$HOME/.bashrc"
   touch "$bashrc_file"
 
-  if ! grep -Fq 'eval "$(fzf --bash)"' "$bashrc_file"; then
+  if ! grep -Fq '/usr/share/doc/fzf/examples/key-bindings.bash' "$bashrc_file"; then
     info "Adding fzf bash integration to .bashrc..."
     cat >>"$bashrc_file" <<'EOF'
 
 if command -v fzf >/dev/null 2>&1; then
-  eval "$(fzf --bash)"
+  [ -f /usr/share/doc/fzf/examples/key-bindings.bash ] && source /usr/share/doc/fzf/examples/key-bindings.bash
+  [ -f /usr/share/doc/fzf/examples/completion.bash ] && source /usr/share/doc/fzf/examples/completion.bash
 fi
 EOF
   else
@@ -358,12 +359,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 EOF
   fi
-
-  if ! grep -Fq '$HOME/go/bin' "$bashrc_file"; then
-    info "Adding Go binaries path to .bashrc..."
-    echo '' >>"$bashrc_file"
-    echo 'export PATH="$HOME/go/bin:$PATH"' >>"$bashrc_file"
-  fi
   success "Shell environment configured"
 }
 
@@ -398,6 +393,7 @@ merge_dotfile_preserve_existing() {
     echo
     echo "$begin_marker"
     cat "$source_file"
+    echo
     echo "$end_marker"
   } >"$target_file"
 
@@ -406,20 +402,76 @@ merge_dotfile_preserve_existing() {
 
 sync_shell_dotfiles() {
   section "Shell Dotfiles"
-  local file_name
-  local source_file
-  local target_file
 
-  for file_name in .path .exports .aliases .functions .extra .inputrc; do
-    source_file="$SCRIPT_DIR/$file_name"
-    target_file="$HOME/$file_name"
+  local aliases_file="$HOME/.aliases"
+  local exports_file="$HOME/.exports"
+  local inputrc_file="$HOME/.inputrc"
+  local backup_stamp
+  local backup_dir
 
-    if [[ -f "$source_file" ]]; then
-      info "Merging $file_name into home directory..."
-      merge_dotfile_preserve_existing "$source_file" "$target_file"
+  backup_stamp="$(date +%Y%m%d-%H%M%S)"
+  backup_dir="$HOME/.setup-workstation-backups/$backup_stamp"
+
+  for file_path in "$aliases_file" "$exports_file" "$inputrc_file"; do
+    if [[ -f "$file_path" ]]; then
+      if [[ ! -d "$backup_dir" ]]; then
+        mkdir -p "$backup_dir"
+      fi
+      cp -a "$file_path" "$backup_dir/"
+      info "Backed up $(basename "$file_path") to $backup_dir"
     fi
   done
-  success "Shell dotfiles synced"
+
+  touch "$aliases_file" "$exports_file" "$inputrc_file"
+
+  if ! grep -Fq '_dev_tmux_start() {' "$aliases_file"; then
+    info "Appending dev tmux function to .aliases..."
+    cat >>"$aliases_file" <<'EOF'
+
+# Dev tmux session
+_dev_tmux_start() {
+  local target_dir
+  if [ -d "$HOME/dab" ]; then
+    target_dir="$HOME/dab"
+  else
+    target_dir="$PWD"
+  fi
+  tmux new-session -A -s dev -c "$target_dir"
+}
+EOF
+  fi
+
+  if ! grep -Fq "alias dev='_dev_tmux_start'" "$aliases_file"; then
+    info "Appending dev alias to .aliases..."
+    echo "alias dev='_dev_tmux_start'" >>"$aliases_file"
+  fi
+
+  if ! grep -Fq 'export PATH="$HOME/go/bin:$PATH"' "$exports_file"; then
+    info "Appending Go PATH export to .exports..."
+    cat >>"$exports_file" <<'EOF'
+
+# Go binaries path
+export PATH="$HOME/go/bin:$PATH"
+EOF
+  fi
+
+  if ! grep -Fq 'npm config get prefix' "$exports_file"; then
+    info "Appending npm global bin export to .exports..."
+    cat >>"$exports_file" <<'EOF'
+
+# npm global bin path (for @github/copilot and other global packages)
+if command -v npm >/dev/null 2>&1; then
+  export PATH="$(npm config get prefix)/bin:$PATH"
+fi
+EOF
+  fi
+
+  if [[ -f "$SCRIPT_DIR/.inputrc" ]] && ! cmp -s "$SCRIPT_DIR/.inputrc" "$inputrc_file"; then
+    info "Updating .inputrc..."
+    cp "$SCRIPT_DIR/.inputrc" "$inputrc_file"
+  fi
+
+  success "Shell dotfiles synced (append-only)"
 }
 
 run_post_install_initializers() {

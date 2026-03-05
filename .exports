@@ -1,0 +1,5 @@
+# Go binaries path
+export PATH="$HOME/go/bin:$PATH"
+
+# npm global bin path (for @github/copilot and other global packages)
+export PATH="$(npm config get prefix)/bin:$PATH"
