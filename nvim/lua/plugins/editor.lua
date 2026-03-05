@@ -46,10 +46,7 @@ return {
         json = { "jq" },
         yaml = { "yamlfmt" },
       },
-      format_on_save = {
-        timeout_ms = 3000,
-        lsp_fallback = true,
-      },
+      format_on_save = false,
     },
   },
   -- Linting
@@ -62,9 +59,6 @@ return {
         go = { "golangcilint" },
         php = { "phpstan" },
       }
-      vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost" }, {
-        callback = function() lint.try_lint() end,
-      })
     end,
   },
   -- TODO comments
