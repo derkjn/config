@@ -110,7 +110,7 @@ return {
         settings = {
           intelephense = {
             files = { maxSize = 5000000 },
-            environment = { phpVersion = "8.2" },
+            environment = { phpVersion = "8.3" },
             stubs = {
               "apache", "bcmath", "bz2", "calendar", "com_dotnet", "Core",
               "ctype", "curl", "date", "dba", "dom", "enchant", "exif",
