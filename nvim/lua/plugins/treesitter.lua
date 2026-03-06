@@ -10,7 +10,9 @@ return {
     config = function()
       local ok, configs = pcall(require, "nvim-treesitter.configs")
       if not ok then
-        vim.notify("treesitter configs not found", vim.log.levels.WARN)
+        vim.schedule(function()
+          vim.notify("Treesitter setup will complete after full load", vim.log.levels.INFO)
+        end)
         return
       end
       

@@ -69,7 +69,7 @@ return {
         end,
       })
 
-      -- Go configuration with vim.lsp.config
+      -- Go configuration
       vim.lsp.config("gopls", {
         cmd = { "gopls" },
         filetypes = { "go", "gomod", "gowork", "gotmpl" },
@@ -101,7 +101,7 @@ return {
         },
       })
 
-      -- PHP configuration with vim.lsp.config
+      -- PHP configuration
       vim.lsp.config("intelephense", {
         cmd = { "intelephense", "--stdio" },
         filetypes = { "php" },
@@ -130,7 +130,7 @@ return {
         },
       })
 
-      -- Lua configuration with vim.lsp.config
+      -- Lua configuration
       vim.lsp.config("lua_ls", {
         cmd = { "lua-language-server" },
         filetypes = { "lua" },
@@ -149,24 +149,8 @@ return {
         },
       })
 
-      -- JSON configuration with vim.lsp.config
-      vim.lsp.config("jsonls", {
-        cmd = { "vscode-json-language-server", "--stdio" },
-        filetypes = { "json", "jsonc" },
-        root_markers = { ".git" },
-        capabilities = capabilities,
-      })
-
-      -- YAML configuration with vim.lsp.config
-      vim.lsp.config("yamlls", {
-        cmd = { "yaml-language-server", "--stdio" },
-        filetypes = { "yaml", "yml" },
-        root_markers = { ".git", ".yamllint" },
-        capabilities = capabilities,
-      })
-
       -- Enable all configured servers
-      vim.lsp.enable({ "gopls", "intelephense", "lua_ls", "jsonls", "yamlls" })
+      vim.lsp.enable({ "gopls", "intelephense", "lua_ls" })
     end,
   },
 }
