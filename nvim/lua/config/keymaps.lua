@@ -16,6 +16,7 @@ map("n", "<C-Right>", ":vertical resize +2<CR>", { desc = "Increase window width
 map("n", "<S-l>", ":bnext<CR>", { desc = "Next buffer" })
 map("n", "<S-h>", ":bprevious<CR>", { desc = "Previous buffer" })
 map("n", "<leader>bd", ":bdelete<CR>", { desc = "Delete buffer" })
+map("n", "<leader>bo", "<cmd>BufferLineCloseOthers<cr>", { desc = "Close other buffers" })
 for i = 1, 9 do
 	map("n", "<leader>" .. i, "<cmd>BufferLineGoToBuffer " .. i .. "<cr>", { desc = "Go to buffer " .. i })
 end

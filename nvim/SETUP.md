@@ -189,7 +189,7 @@ tmux new-session -s work
 ```vim
 :Mason           " Install missing servers
 :LspInfo        " Check which servers are running
-:Mason gopls intelephense lua_ls
+:MasonInstall gopls intelephense lua_ls
 ```
 
 ### Theme not loading

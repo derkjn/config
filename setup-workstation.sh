@@ -20,8 +20,6 @@ log() {
 success() {
   echo -e "${GREEN}✓${NC} $*"
 }
-  
-  success "Ubuntu Linux detected (${VERSION_CODENAME:-unknown})"
 
 info() {
   echo -e "${CYAN}ℹ${NC} $*"
@@ -44,6 +42,7 @@ require_ubuntu_linux() {
   # shellcheck source=/dev/null
   source /etc/os-release
   [[ "${ID:-}" == "ubuntu" ]] || fail "This script only supports Ubuntu. Detected: ${ID:-unknown}"
+  success "Ubuntu Linux detected (${VERSION_CODENAME:-unknown})"
 }
 
 as_root() {
@@ -52,23 +51,6 @@ as_root() {
   else
     sudo "$@"
   fi
-}
-
-cleanup_legacy_warp_apt_conflicts() {
-  local apt_file
-
-  info "Cleaning legacy Warp APT repo conflicts (if any)..."
-  as_root rm -f /etc/apt/trusted.gpg.d/warpdotdev.gpg
-
-  while IFS= read -r apt_file; do
-    [[ -n "$apt_file" ]] || continue
-
-    if [[ "$apt_file" == "/etc/apt/sources.list" ]]; then
-      as_root sed -i '/releases\.warp\.dev\/linux\/deb/d' /etc/apt/sources.list
-    else
-      as_root rm -f "$apt_file"
-    fi
-  done < <(grep -RIl 'releases\.warp\.dev/linux/deb' /etc/apt/sources.list /etc/apt/sources.list.d 2>/dev/null || true)
 }
 
 install_apt_prereqs() {
@@ -281,35 +263,6 @@ install_ibm_plex_mono_nerdfont() {
 
   rm -rf "$tmp_dir"
   success "IBM Plex Mono Nerd Font installed"
-}
-
-install_warp() {
-  section "Warp Terminal"
-  info "Configuring Warp terminal APT repository..."
-  as_root mkdir -p /etc/apt/keyrings
-
-  # Remove legacy/conflicting Warp repository definitions and key locations.
-  for apt_list_file in /etc/apt/sources.list /etc/apt/sources.list.d/*.list; do
-    [[ -f "$apt_list_file" ]] || continue
-    if grep -Fq 'releases.warp.dev/linux/deb' "$apt_list_file"; then
-      as_root sed -i '/releases\.warp\.dev\/linux\/deb/d' "$apt_list_file"
-    fi
-  done
-  as_root rm -f /etc/apt/sources.list.d/warpdotdev.list
-  as_root rm -f /etc/apt/trusted.gpg.d/warpdotdev.gpg
-
-  curl -fsSL https://releases.warp.dev/linux/keys/warp.asc | as_root gpg --dearmor -o /etc/apt/keyrings/warp.gpg
-  echo "deb [signed-by=/etc/apt/keyrings/warp.gpg] https://releases.warp.dev/linux/deb stable main" | as_root tee /etc/apt/sources.list.d/warp.list >/dev/null
-
-  as_root apt-get update
-
-  if dpkg -s warp-terminal >/dev/null 2>&1; then
-    success "Warp terminal already installed"
-  else
-    info "Installing Warp terminal..."
-    as_root apt-get install -y warp-terminal
-    success "Warp terminal installed"
-  fi
 }
 
 sync_editor_configs() {
@@ -555,7 +508,6 @@ main() {
   echo -e "${CYAN}│${NC}"
   
   require_ubuntu_linux
-  cleanup_legacy_warp_apt_conflicts
   install_apt_prereqs
   install_dev_system_tools
   install_nvm
@@ -566,7 +518,6 @@ main() {
   install_copilot_npm
   install_npm_language_servers
   install_ibm_plex_mono_nerdfont
-  install_warp
   sync_editor_configs
   sync_shell_dotfiles
   ensure_bashrc_defaults

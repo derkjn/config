@@ -2,4 +2,6 @@
 export PATH="$HOME/go/bin:$PATH"
 
 # npm global bin path (for @github/copilot and other global packages)
-export PATH="$(npm config get prefix)/bin:$PATH"
+if command -v npm >/dev/null 2>&1; then
+	export PATH="$(npm config get prefix)/bin:$PATH"
+fi

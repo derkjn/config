@@ -1,0 +1,3 @@
+# Optional PATH extensions.
+# Add custom bin paths here, for example:
+# export PATH="$HOME/.local/bin:$PATH"

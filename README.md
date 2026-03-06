@@ -21,7 +21,7 @@ An idempotent, human-friendly bash script that automates the entire workstation 
 - **GitHub Copilot** npm package
 - **Language Servers** (JSON, YAML, tree-sitter-cli)
 - **IBM Plex Mono Nerd Font** for terminal/editor
-- **Warp** modern terminal
+- **Standard terminal workflow** (tmux + system terminal)
 - **System tools** (ripgrep, fd-find, fzf, composer, build-essential, xclip)
 
 **Configures:**
@@ -144,6 +144,9 @@ Or manually in Neovim:
 ├── .aliases                     # Shell aliases
 ├── .exports                     # Shell exports
 ├── .inputrc                     # Readline config
+├── .path                        # Optional PATH additions
+├── .functions                   # Optional shell helpers
+├── .extra                       # Optional local overrides
 ├── nvim/                        # Neovim configuration
 │   ├── init.lua                # Entry point
 │   ├── lazy-lock.json          # Plugin lock file

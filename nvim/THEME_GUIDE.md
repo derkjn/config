@@ -105,7 +105,6 @@ Configure in your terminal settings:
 - **GNOME Terminal**: Preferences → Color
 - **Alacritty**: Set in alacritty.yml
 - **Kitty**: Set in kitty.conf
-- **Warp**: Set in terminal settings
 
 ## Current Setup Status
 
