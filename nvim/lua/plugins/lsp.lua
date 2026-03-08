@@ -63,6 +63,7 @@ return {
           map("<leader>ca", vim.lsp.buf.code_action, "Code action")
           map("<leader>rn", vim.lsp.buf.rename, "Rename symbol")
           map("<leader>sh", vim.lsp.buf.signature_help, "Signature help")
+          map("<leader>ss", vim.lsp.buf.signature_help, "Peek signature")
           map("<leader>cf", function()
             vim.lsp.buf.format({ async = true })
           end, "Format")
