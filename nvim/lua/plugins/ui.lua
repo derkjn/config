@@ -14,7 +14,20 @@ return {
         lualine_a = { "mode" },
         lualine_b = { "branch", "diff", "diagnostics" },
         lualine_c = { { "filename", path = 1 } },
-        lualine_x = { "encoding", "fileformat", "filetype" },
+        lualine_x = {
+          {
+            function()
+              return vim.lsp.status()
+            end,
+            cond = function()
+              return vim.lsp.status() ~= ""
+            end,
+            color = { fg = "#83c092" },
+          },
+          "encoding",
+          "fileformat",
+          "filetype",
+        },
         lualine_y = { "progress" },
         lualine_z = { "location" },
       },
@@ -64,6 +77,21 @@ return {
   {
     "j-hui/fidget.nvim",
     event = "LspAttach",
-    opts = {},
+    opts = {
+      progress = {
+        display = {
+          done_ttl = 3,
+          done_icon = "✓",
+          progress_icon = { pattern = "dots", period = 1 },
+        },
+      },
+      notification = {
+        window = {
+          winblend = 0,
+          border = "none",
+          align = "bottom",
+        },
+      },
+    },
   },
 }

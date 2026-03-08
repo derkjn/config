@@ -48,9 +48,25 @@ return {
       local capabilities = cmp_nvim_lsp.default_capabilities()
 
       -- Keymaps on LspAttach
-      vim.api.nvim_create_autocmd("LspAttach", {
-        group = vim.api.nvim_create_augroup("UserLspConfig", { clear = true }),
+      local lsp_augroup = vim.api.nvim_create_augroup("UserLspConfig", { clear = true })
+
+      vim.api.nvim_create_autocmd("LspDetach", {
+        group = lsp_augroup,
         callback = function(ev)
+          local client = vim.lsp.get_client_by_id(ev.data.client_id)
+          if client then
+            vim.notify(client.name .. " detached", vim.log.levels.WARN, { title = "LSP" })
+          end
+        end,
+      })
+
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = lsp_augroup,
+        callback = function(ev)
+          local client = vim.lsp.get_client_by_id(ev.data.client_id)
+          if client then
+            vim.notify(client.name .. " attached", vim.log.levels.INFO, { title = "LSP" })
+          end
           local map = function(keys, func, desc)
             vim.keymap.set("n", keys, func, { buffer = ev.buf, desc = desc })
           end
